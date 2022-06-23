@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { readFile } = require('./helpers/fs');
+const { tokenGenerator } = require('./helpers/tokenGenerator');
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,6 +30,15 @@ app.get('/talker/:id', (request, response) => {
     response.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
   response.status(HTTP_OK_STATUS).json(findId);
+});
+
+app.post('/login', (request, response) => {
+  const generatedToken = tokenGenerator();
+  const { email, password } = request.body;
+  if (email && password) {
+    return response.status(HTTP_OK_STATUS).json({ token: generatedToken });
+  }
+  return response.status(401).json({ message: 'Usuário ou senha inválidos' });
 });
 
 app.listen(PORT, () => {

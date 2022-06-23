@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const readFile = (path) => JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }));
 
