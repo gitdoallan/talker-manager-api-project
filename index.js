@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { readFile } = require('./helpers/fs');
 const { tokenGenerator } = require('./helpers/tokenGenerator');
+const { loginValidation } = require('./middlewares/loginValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -32,7 +33,7 @@ app.get('/talker/:id', (request, response) => {
   response.status(HTTP_OK_STATUS).json(findId);
 });
 
-app.post('/login', (request, response) => {
+app.post('/login', loginValidation, (request, response) => {
   const generatedToken = tokenGenerator();
   const { email, password } = request.body;
   if (email && password) {
