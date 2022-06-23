@@ -15,7 +15,20 @@ app.get('/', (_request, response) => {
 
 app.get('/talker', (_request, response) => {
   const talkers = readFile('talker.json');
-  response.status(200).json(talkers);
+  if (!talkers) {
+    response.status(HTTP_OK_STATUS).send([]);
+  }
+  response.status(HTTP_OK_STATUS).json(talkers);
+});
+
+app.get('/talker/:id', (request, response) => {
+  const { id } = request.params;
+  const talkers = readFile('talker.json');
+  const findId = talkers.find((talker) => talker.id === +id);
+  if (!findId) {
+    response.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  }
+  response.status(HTTP_OK_STATUS).json(findId);
 });
 
 app.listen(PORT, () => {
