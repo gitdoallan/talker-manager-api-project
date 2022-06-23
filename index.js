@@ -1,8 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readFile } = require('./helpers/fs');
+const { readFile, writeFile } = require('./helpers/fs');
 const { tokenGenerator } = require('./helpers/tokenGenerator');
 const { loginValidation } = require('./middlewares/loginValidation');
+const { tokenValidation } = require('./middlewares/tokenValidation');
+const { nameValidation } = require('./middlewares/nameValidation');
+const { ageValidation } = require('./middlewares/ageValidation');
+const { talkValidation } = require('./middlewares/talkValidation');
+const { rateValidation } = require('./middlewares/rateValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,13 +38,25 @@ app.get('/talker/:id', (request, response) => {
   response.status(HTTP_OK_STATUS).json(findId);
 });
 
-app.post('/login', loginValidation, (request, response) => {
+app.post('/talker',
+tokenValidation,
+nameValidation,
+ageValidation,
+talkValidation,
+rateValidation,
+(request, response) => {
+  const { name, age, talk } = request.body;
+  const talkers = readFile('talker.json');
+  const { id } = talkers[talkers.length - 1];
+  const newTalker = { id: +id + 1, name, age, talk };
+  talkers.push(newTalker);
+  writeFile('talker.json', talkers);
+  response.status(201).json(newTalker);
+});
+
+app.post('/login', loginValidation, (_request, response) => {
   const generatedToken = tokenGenerator();
-  const { email, password } = request.body;
-  if (email && password) {
     return response.status(HTTP_OK_STATUS).json({ token: generatedToken });
-  }
-  return response.status(401).json({ message: 'Usuário ou senha inválidos' });
 });
 
 app.listen(PORT, () => {

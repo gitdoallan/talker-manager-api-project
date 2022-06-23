@@ -1,8 +1,9 @@
-const fs = require('fs').promises;
+const read = require('fs');
+const write = require('fs').promises;
 
-const readFile = (path) => JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }));
+const readFile = (path) => JSON.parse(read.readFileSync(path, { encoding: 'utf8' }));
 
-const writeFile = (path, data) => fs.writeFile(path, JSON
+const writeFile = (path, data) => write.writeFile(path, JSON
   .stringify(data), { encoding: 'utf8' });
 
 module.exports = { readFile, writeFile };
