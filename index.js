@@ -74,6 +74,15 @@ rateValidation,
   response.status(HTTP_OK_STATUS).json(talkers[index]);
 });
 
+app.delete('/talker/:id', tokenValidation, (request, response) => {
+  const { id } = request.params;
+  const talkers = readFile(talkerJson);
+  const index = talkers.findIndex((talker) => talker.id === +id);
+  talkers.splice(index, 1);
+  writeFile(talkerJson, talkers);
+  response.status(204).send();
+});
+
 app.post('/login', loginValidation, (_request, response) => {
   const generatedToken = tokenGenerator();
     return response.status(HTTP_OK_STATUS).json({ token: generatedToken });
