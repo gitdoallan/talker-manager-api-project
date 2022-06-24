@@ -30,6 +30,13 @@ app.get('/talker', (_request, response) => {
   response.status(HTTP_OK_STATUS).json(talkers);
 });
 
+app.get('/talker/search', tokenValidation, (request, response) => {
+  const { q } = request.query;
+  const talkers = readFile(talkerJson);
+  const findQuery = talkers.filter((talker) => talker.name.toLowerCase().includes(q.toLowerCase()));
+  response.status(HTTP_OK_STATUS).json(findQuery);
+});
+
 app.get('/talker/:id', (request, response) => {
   const { id } = request.params;
   const talkers = readFile(talkerJson);
